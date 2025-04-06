@@ -1,49 +1,43 @@
-package javaproject;
-
 public class NumberSystemConverter extends UnitConverter {
-    public static final String[] UNITS = {"binary", "decimal", "hexadecimal", "octal"};
+    public static final String[] UNITS = {"Binary", "Decimal", "Octal", "Hexadecimal"};
 
     @Override
-    public double convert(double value, String fromUnit, String toUnit) {
-        // Number system conversions don't involve numerical calculations, so we treat the value as a string
-        String valueStr = String.valueOf((int) value); // Treat value as an integer
-        if (!isValidUnit(fromUnit, UNITS) || !isValidUnit(toUnit, UNITS)) {
-            throw new IllegalArgumentException("Invalid unit for number system conversion.");
-        }
-
-        // Validate input for negative values
-        if (value < 0) {
-            throw new IllegalArgumentException("Negative values are not supported for number system conversions.");
-        }
-
-        // Convert to decimal first
-        int decimalValue = toDecimal(valueStr, fromUnit);
-        // Convert from decimal to target unit
-        return fromDecimal(decimalValue, toUnit);
+    public String convert(double value, String fromUnit, String toUnit) {
+        String input = String.valueOf((int) value);  // Convert double to String (integer part)
+        return convertString(input, fromUnit, toUnit);
     }
 
-    private int toDecimal(String value, String fromUnit) {
-        switch (fromUnit.toLowerCase()) {
-            case "binary": return Integer.parseInt(value, 2);
-            case "decimal": return Integer.parseInt(value, 10);
-            case "hexadecimal": return Integer.parseInt(value, 16);
-            case "octal": return Integer.parseInt(value, 8);
-            default: throw new IllegalArgumentException("Invalid fromUnit: " + fromUnit);
+    public String convertString(String input, String fromUnit, String toUnit) {
+        if (fromUnit.equals(toUnit)) {
+            return input;
         }
-    }
 
-    private int fromDecimal(int value, String toUnit) {
-        switch (toUnit.toLowerCase()) {
-            case "binary": 
-                return Integer.parseInt(Integer.toBinaryString(value));
-            case "decimal": 
-                return value;
-            case "hexadecimal": 
-                return Integer.parseInt(Integer.toHexString(value), 16);
-            case "octal": 
-                return Integer.parseInt(Integer.toOctalString(value), 8);
-            default: 
-                throw new IllegalArgumentException("Invalid toUnit: " + toUnit);
+        int decimalValue = 0;
+
+        // Convert input to decimal
+        switch (fromUnit) {
+            case "Binary" -> decimalValue = Integer.parseInt(input, 2);
+            case "Octal" -> decimalValue = Integer.parseInt(input, 8);
+            case "Decimal" -> decimalValue = Integer.parseInt(input);
+            case "Hexadecimal" -> decimalValue = Integer.parseInt(input, 16);
+            default -> throw new IllegalArgumentException("Invalid input format");
+        }
+
+        // Convert decimal to target unit
+        switch (toUnit) {
+            case "Binary" -> {
+                return Integer.toBinaryString(decimalValue);
+            }
+            case "Octal" -> {
+                return Integer.toOctalString(decimalValue);
+            }
+            case "Decimal" -> {
+                return String.valueOf(decimalValue);
+            }
+            case "Hexadecimal" -> {
+                return Integer.toHexString(decimalValue).toUpperCase();
+            }
+            default -> throw new IllegalArgumentException("Invalid target format");
         }
     }
 }

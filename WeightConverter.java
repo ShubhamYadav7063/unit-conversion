@@ -1,39 +1,76 @@
-package javaproject;
-
 public class WeightConverter extends UnitConverter {
-    public static final String[] UNITS = {"gram", "kilogram", "milligram", "pound", "ounce"};
+    public static final String[] UNITS = {
+        "Gram", "Kilogram", "Ton", "Quintal", "Pound"
+    };
 
     @Override
-    public double convert(double value, String fromUnit, String toUnit) {
-        if (!isValidUnit(fromUnit, UNITS) || !isValidUnit(toUnit, UNITS)) {
-            throw new IllegalArgumentException("Invalid unit for weight conversion.");
+    public String convert(double value, String fromUnit, String toUnit) {
+        if (fromUnit.equals(toUnit)) {
+            return String.valueOf(value); // If units are the same, return the value as string
         }
 
-        // Convert to grams first
-        double inGrams = toGrams(value, fromUnit);
-        // Convert from grams to target unit
-        return fromGrams(inGrams, toUnit);
-    }
+        double result = 0.0;
 
-    private double toGrams(double value, String fromUnit) {
-        switch (fromUnit.toLowerCase()) {
-            case "gram": return value;
-            case "kilogram": return value * 1000;
-            case "milligram": return value / 1000;
-            case "pound": return value * 453.592;
-            case "ounce": return value * 28.3495;
-            default: throw new IllegalArgumentException("Invalid fromUnit: " + fromUnit);
+        // Gram to other units
+        switch (fromUnit) {
+            case "Gram" -> {
+                switch (toUnit) {
+                    case "Kilogram" -> result = value / 1000;
+                    case "Ton" -> result = value / 1_000_000;
+                    case "Quintal" -> result = value / 100000;
+                    case "Pound" -> result = value * 0.00220462;
+                    default -> {
+                        
+                    }
+                }
+            }
+            case "Kilogram" -> {
+                switch (toUnit) {
+                    case "Gram" -> result = value * 1000;
+                    case "Ton" -> result = value / 1000;
+                    case "Quintal" -> result = value / 100;
+                    case "Pound" -> result = value * 2.20462;
+                    default -> {
+                        
+                    }
+                }
+            }
+            case "Ton" -> {
+                switch (toUnit) {
+                    case "Gram" -> result = value * 1_000_000;
+                    case "Kilogram" -> result = value * 1000;
+                    case "Quintal" -> result = value * 100;
+                    case "Pound" -> result = value * 2204.62;
+                    default -> {
+                    }
+                }
+            }
+            case "Quintal" -> {
+                switch (toUnit) {
+                    case "Gram" -> result = value * 100000;
+                    case "Kilogram" -> result = value * 100;
+                    case "Ton" -> result = value / 100;
+                    case "Pound" -> result = value * 220.462;
+                    default -> {
+                        
+                    }
+                }
+            }
+            case "Pound" -> {
+                switch (toUnit) {
+                    case "Gram" -> result = value * 453.592;
+                    case "Kilogram" -> result = value / 2.20462;
+                    case "Ton" -> result = value / 2204.62;
+                    case "Quintal" -> result = value / 220.462;
+                    default -> {
+                    }
+                }
+            }
+            default -> {
+            }
         }
-    }
 
-    private double fromGrams(double value, String toUnit) {
-        switch (toUnit.toLowerCase()) {
-            case "gram": return value;
-            case "kilogram": return value / 1000;
-            case "milligram": return value * 1000;
-            case "pound": return value / 453.592;
-            case "ounce": return value / 28.3495;
-            default: throw new IllegalArgumentException("Invalid toUnit: " + toUnit);
-        }
+        // Return the result as a string
+        return String.valueOf(result);
     }
 }

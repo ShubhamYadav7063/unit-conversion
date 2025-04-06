@@ -1,35 +1,35 @@
-package javaproject;
-
 public class TemperatureConverter extends UnitConverter {
-    public static final String[] UNITS = {"celsius", "fahrenheit", "kelvin"};
+    public static final String[] UNITS = {
+        "Celsius", "Fahrenheit", "Kelvin"
+    };
 
     @Override
-    public double convert(double value, String fromUnit, String toUnit) {
-        if (!isValidUnit(fromUnit, UNITS) || !isValidUnit(toUnit, UNITS)) {
-            throw new IllegalArgumentException("Invalid unit for temperature conversion.");
+    public String convert(double value, String fromUnit, String toUnit) {
+        if (fromUnit.equals(toUnit)) {
+            return String.valueOf(value); // If units are the same, return the value as string
         }
 
-        // Convert to Celsius first
-        double inCelsius = toCelsius(value, fromUnit);
-        // Convert from Celsius to target unit
-        return fromCelsius(inCelsius, toUnit);
-    }
+        double result = 0.0;
 
-    private double toCelsius(double value, String fromUnit) {
-        switch (fromUnit.toLowerCase()) {
-            case "celsius": return value;
-            case "fahrenheit": return (value - 32) * 5 / 9;
-            case "kelvin": return value - 273.15;
-            default: throw new IllegalArgumentException("Invalid fromUnit: " + fromUnit);
+        // Celsius to other units
+        switch (fromUnit) {
+            case "Celsius" -> {
+                if (toUnit.equals("Fahrenheit")) result = (value * 9/5) + 32;
+                else if (toUnit.equals("Kelvin")) result = value + 273.15;
+            }
+            case "Fahrenheit" -> {
+                if (toUnit.equals("Celsius")) result = (value - 32) * 5/9;
+                else if (toUnit.equals("Kelvin")) result = (value - 32) * 5/9 + 273.15;
+            }
+            case "Kelvin" -> {
+                if (toUnit.equals("Celsius")) result = value - 273.15;
+                else if (toUnit.equals("Fahrenheit")) result = (value - 273.15) * 9/5 + 32;
+            }
+            default -> {
+            }
         }
-    }
 
-    private double fromCelsius(double value, String toUnit) {
-        switch (toUnit.toLowerCase()) {
-            case "celsius": return value;
-            case "fahrenheit": return (value * 9 / 5) + 32;
-            case "kelvin": return value + 273.15;
-            default: throw new IllegalArgumentException("Invalid toUnit: " + toUnit);
-        }
+        // Return the result as a string
+        return String.valueOf(result);
     }
 }
